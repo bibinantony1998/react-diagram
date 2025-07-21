@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, MouseEvent } from 'react';
 import { useDrop } from 'react-dnd';
 import { nanoid } from 'nanoid';
 import Shape from './Shape';
-import Xarrow, { Xwrapper } from 'react-xarrows';
+import Line from './Line';
 import Popover from './Popover';
 
 interface ShapeData {
@@ -15,8 +15,8 @@ interface ShapeData {
 
 interface LineData {
   id: string;
-  start: string;
-  end: string;
+  start: { x: number; y: number };
+  end: { x: number; y: number };
 }
 
 interface DiagramAreaProps {
@@ -26,6 +26,7 @@ interface DiagramAreaProps {
 const DiagramArea: React.FC<DiagramAreaProps> = ({ popoverContent }) => {
   const [shapes, setShapes] = useState<ShapeData[]>([]);
   const [lines, setLines] = useState<LineData[]>([]);
+  const [drawingLine, setDrawingLine] = useState<LineData | null>(null);
   const [selectedShape, setSelectedShape] = useState<ShapeData | null>(null);
 
   const moveShape = useCallback(
@@ -47,21 +48,43 @@ const DiagramArea: React.FC<DiagramAreaProps> = ({ popoverContent }) => {
     );
   }, []);
 
-  const addLine = (start: string, end: string) => {
-    setLines([...lines, { id: nanoid(), start, end }]);
+  const handleStartConnection = (shapeId: string, position: 'top' | 'bottom' | 'left' | 'right') => {
+    const shape = shapes.find(s => s.id === shapeId);
+    if (!shape) return;
+
+    const { x, y } = getConnectorPosition(shape, position);
+    setDrawingLine({ id: 'drawing', start: { x, y }, end: { x, y } });
   };
 
-  const [startLine, setStartLine] = useState<string | null>(null);
+  const handleEndConnection = (shapeId: string, position: 'top' | 'bottom' | 'left' | 'right') => {
+    if (drawingLine) {
+      const shape = shapes.find(s => s.id === shapeId);
+      if (!shape) return;
 
-  const handleStartConnection = (startId: string) => {
-    setStartLine(startId);
-  };
-
-  const handleEndConnection = (endId: string) => {
-    if (startLine) {
-      addLine(startLine, endId);
+      const { x, y } = getConnectorPosition(shape, position);
+      setLines([...lines, { ...drawingLine, end: { x, y }, id: nanoid() }]);
     }
-    setStartLine(null);
+    setDrawingLine(null);
+  };
+
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (drawingLine) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setDrawingLine({ ...drawingLine, end: { x: e.clientX - rect.left, y: e.clientY - rect.top } });
+    }
+  };
+
+  const getConnectorPosition = (shape: ShapeData, position: 'top' | 'bottom' | 'left' | 'right') => {
+    switch (position) {
+      case 'top':
+        return { x: shape.x + 60, y: shape.y };
+      case 'bottom':
+        return { x: shape.x + 60, y: shape.y + 70 };
+      case 'left':
+        return { x: shape.x, y: shape.y + 35 };
+      case 'right':
+        return { x: shape.x + 120, y: shape.y + 35 };
+    }
   };
 
   const handleShapeClick = (shape: ShapeData) => {
@@ -104,28 +127,31 @@ const DiagramArea: React.FC<DiagramAreaProps> = ({ popoverContent }) => {
         border: '1px solid black',
         position: 'relative',
       }}
+      onMouseMove={handleMouseMove}
+      onMouseUp={() => setDrawingLine(null)}
       onClick={() => setSelectedShape(null)}
     >
-      <Xwrapper>
-        {shapes.map((shape) => (
-          <div key={shape.id} onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); handleShapeClick(shape); }}>
-            <Shape
-              {...shape}
-              onMove={moveShape}
-              onTextChange={handleTextChange}
-              onStartConnection={handleStartConnection}
-              onEndConnection={handleEndConnection}
-            />
-          </div>
-        ))}
-        {lines.map((line) => (
-          <Xarrow
-            key={line.id}
-            start={line.start}
-            end={line.end}
+      {shapes.map((shape) => (
+        <div key={shape.id} onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); handleShapeClick(shape); }}>
+          <Shape
+            id={shape.id}
+            shape={shape.type}
+            x={shape.x}
+            y={shape.y}
+            text={shape.text}
+            onMove={moveShape}
+            onTextChange={handleTextChange}
+            onStartConnection={handleStartConnection}
+            onEndConnection={handleEndConnection}
           />
-        ))}
-      </Xwrapper>
+        </div>
+      ))}
+      {lines.map((line) => (
+        <Line key={line.id} x1={line.start.x} y1={line.start.y} x2={line.end.x} y2={line.end.y} />
+      ))}
+      {drawingLine && (
+        <Line x1={drawingLine.start.x} y1={drawingLine.start.y} x2={drawingLine.end.x} y2={drawingLine.end.y} />
+      )}
       {selectedShape && (
         <Popover
           shapeId={selectedShape.id}

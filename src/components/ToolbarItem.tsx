@@ -29,7 +29,12 @@ const ToolbarItem: React.FC<ToolbarItemProps> = ({ item }) => {
         opacity: isDragging ? 0.5 : 1,
       }}
     >
-      {item.name}
+      <svg width="50" height="30">
+        {item.shape === 'rectangle' && <rect width="50" height="30" style={{ fill: '#ecf0f1', stroke: '#3498db', strokeWidth: 2 }} />}
+        {item.shape === 'circle' && <circle cx="25" cy="15" r="15" style={{ fill: '#ecf0f1', stroke: '#e74c3c', strokeWidth: 2 }} />}
+        {item.shape === 'diamond' && <polygon points="25,0 50,15 25,30 0,15" style={{ fill: '#ecf0f1', stroke: '#f1c40f', strokeWidth: 2 }} />}
+      </svg>
+      <span style={{ marginLeft: '10px' }}>{item.name}</span>
     </div>
   );
 };
