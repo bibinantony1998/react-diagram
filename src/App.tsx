@@ -1,20 +1,14 @@
-import FlowChart from './components/FlowChart';
+import Diagram from './components/Diagram';
+import Toolbar from './components/Toolbar';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 function App() {
-  const renderPopoverContent = (shapeId: string) => {
-    return (
-      <div>
-        <h3>Custom Popover</h3>
-        <p>This popover is for shape: {shapeId}</p>
-        <button onClick={() => alert(`Button clicked for shape: ${shapeId}`)}>
-          Click me
-        </button>
-      </div>
-    );
-  };
-
   return (
-    <FlowChart popoverContent={renderPopoverContent} />
+    <DndProvider backend={HTML5Backend}>
+      <Toolbar />
+      <Diagram />
+    </DndProvider>
   );
 }
 

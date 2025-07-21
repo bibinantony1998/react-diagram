@@ -5,13 +5,22 @@ interface LineProps {
   y1: number;
   x2: number;
   y2: number;
+  text?: string;
 }
 
-const Line: React.FC<LineProps> = ({ x1, y1, x2, y2 }) => {
+const Line: React.FC<LineProps> = ({ x1, y1, x2, y2, text }) => {
+  const textX = (x1 + x2) / 2;
+  const textY = (y1 + y2) / 2;
+
   return (
-    <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+    <g>
       <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="black" strokeWidth="2" />
-    </svg>
+      {text && (
+        <text x={textX} y={textY} fill="black" textAnchor="middle" dy="-5">
+          {text}
+        </text>
+      )}
+    </g>
   );
 };
 
