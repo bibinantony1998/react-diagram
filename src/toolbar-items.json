@@ -1,26 +1,31 @@
 {
   "shapes": [
     {
-      "type": "rectangle",
-      "label": "Rectangle"
+      "id": "shape_1",
+      "shape": "rectangle",
+      "name": "Rectangle"
     },
     {
-      "type": "circle",
-      "label": "Circle"
+      "id": "shape_2",
+      "shape": "circle",
+      "name": "Circle"
     },
     {
-      "type": "diamond",
-      "label": "Diamond"
+      "id": "shape_3",
+      "shape": "diamond",
+      "name": "Diamond"
     }
   ],
   "lines": [
     {
-      "type": "solid",
-      "label": "Solid Line"
+      "id": "line_1",
+      "shape": "solid",
+      "name": "Solid Line"
     },
     {
-      "type": "dashed",
-      "label": "Dashed Line"
+      "id": "line_2",
+      "shape": "dashed",
+      "name": "Dashed Line"
     }
   ]
 }

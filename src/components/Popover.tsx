@@ -15,6 +15,7 @@ const Popover: React.FC<PopoverProps> = ({ shapeId, x, y, content, onClose }) =>
         position: 'absolute',
         left: x + 130, // Position to the right of the shape
         top: y,
+        width: '30px',
         background: 'white',
         border: '1px solid #ccc',
         padding: '10px',

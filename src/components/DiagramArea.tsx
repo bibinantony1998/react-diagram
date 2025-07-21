@@ -137,7 +137,7 @@ const DiagramArea: React.FC<DiagramAreaProps> = ({ popoverContent }) => {
     <div
       ref={drop}
       style={{
-        flex: 1,
+        flexBasis: '100%',
         border: '1px solid black',
         position: 'relative',
       }}
@@ -146,7 +146,7 @@ const DiagramArea: React.FC<DiagramAreaProps> = ({ popoverContent }) => {
       onClick={() => setSelectedShape(null)}
     >
       {shapes.map((shape) => (
-        <div key={shape.id} onClick={(e) => { e.stopPropagation(); handleShapeClick(shape); }}>
+        <div key={shape.id} onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); handleShapeClick(shape); }}>
           <Shape
             {...shape}
             onMove={moveShape}
@@ -165,43 +165,45 @@ const DiagramArea: React.FC<DiagramAreaProps> = ({ popoverContent }) => {
           content={popoverContent ? popoverContent(selectedShape.id) : <div>Popover for {selectedShape.type}</div>}
         />
       )}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-        {lines.map(line => {
-          const startShape = shapes.find(s => s.id === line.startShapeId);
-          const endShape = shapes.find(s => s.id === line.endShapeId);
-          if (!startShape || !endShape) return null;
+      <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+        <g>
+          {lines.map(line => {
+            const startShape = shapes.find(s => s.id === line.startShapeId);
+            const endShape = shapes.find(s => s.id === line.endShapeId);
+            if (!startShape || !endShape) return null;
 
-          const startCenter = getShapeCenter(startShape);
-          const endCenter = getShapeCenter(endShape);
+            const startCenter = getShapeCenter(startShape);
+            const endCenter = getShapeCenter(endShape);
 
-          return (
-            <Line
-              key={line.id}
-              x1={startCenter.x}
-              y1={startCenter.y}
-              x2={endCenter.x}
-              y2={endCenter.y}
-              type={line.type}
-              text={line.text}
-              onTextChange={(text) => handleLineTextChange(line.id, text)}
-            />
-          );
-        })}
-        {drawingLine && (() => {
-          const startShape = shapes.find(s => s.id === drawingLine.startShapeId);
-          if (!startShape) return null;
-          const startCenter = getShapeCenter(startShape);
-          return (
-            <Line
-              x1={startCenter.x}
-              y1={startCenter.y}
-              x2={drawingLine.x2}
-              y2={drawingLine.y2}
-              type={drawingLine.type}
-            />
-          );
-        })()}
-      </div>
+            return (
+              <Line
+                key={line.id}
+                x1={startCenter.x}
+                y1={startCenter.y}
+                x2={endCenter.x}
+                y2={endCenter.y}
+                type={line.type}
+                text={line.text}
+                onTextChange={(text) => handleLineTextChange(line.id, text)}
+              />
+            );
+          })}
+          {drawingLine && (() => {
+            const startShape = shapes.find(s => s.id === drawingLine.startShapeId);
+            if (!startShape) return null;
+            const startCenter = getShapeCenter(startShape);
+            return (
+              <Line
+                x1={startCenter.x}
+                y1={startCenter.y}
+                x2={drawingLine.x2}
+                y2={drawingLine.y2}
+                type={drawingLine.type}
+              />
+            );
+          })()}
+        </g>
+      </svg>
     </div>
   );
 };

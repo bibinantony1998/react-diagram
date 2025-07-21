@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 
 interface ConnectionPointProps {
   shapeId: string;
   position: 'top' | 'bottom' | 'left' | 'right';
-  onMouseDown: (shapeId: string, position: 'top' | 'bottom' | 'left' | 'right') => void;
-  onMouseUp: (shapeId: string) => void;
+  onMouseDown: (e: MouseEvent<HTMLDivElement>) => void;
+  onMouseUp: (e: MouseEvent<HTMLDivElement>) => void;
 }
 
 const ConnectionPoint: React.FC<ConnectionPointProps> = ({ shapeId, position, onMouseDown, onMouseUp }) => {
@@ -32,8 +32,8 @@ const ConnectionPoint: React.FC<ConnectionPointProps> = ({ shapeId, position, on
         cursor: 'crosshair',
         ...getPositionStyle(),
       }}
-      onMouseDown={() => onMouseDown(shapeId, position)}
-      onMouseUp={() => onMouseUp(shapeId)}
+      onMouseDown={onMouseDown}
+      onMouseUp={onMouseUp}
     ></div>
   );
 };

@@ -3,15 +3,16 @@ import { useDrag } from 'react-dnd';
 
 interface ToolbarItemProps {
   item: {
-    type: string;
-    label: string;
+    id: string;
+    shape: string;
+    name: string;
   };
 }
 
 const ToolbarItem: React.FC<ToolbarItemProps> = ({ item }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'shape',
-    item: { type: item.type },
+    item: { type: item.shape },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -28,7 +29,7 @@ const ToolbarItem: React.FC<ToolbarItemProps> = ({ item }) => {
         opacity: isDragging ? 0.5 : 1,
       }}
     >
-      {item.label}
+      {item.name}
     </div>
   );
 };

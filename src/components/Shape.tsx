@@ -26,52 +26,25 @@ const Shape: React.FC<ShapeProps> = ({ id, type, x, y, text, onMove, onTextChang
   }));
 
   const getShapeStyle = () => {
-    const baseStyle = {
+    return {
       position: 'absolute',
       left: x,
       top: y,
       opacity: isDragging ? 0.5 : 1,
       cursor: 'move',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
     };
+  };
 
+  const renderShape = () => {
     switch (type) {
       case 'rectangle':
-        return {
-          ...baseStyle,
-          width: '120px',
-          height: '70px',
-          border: '2px solid #3498db',
-          background: '#ecf0f1',
-        };
+        return <rect width="120" height="70" style={{ fill: '#ecf0f1', stroke: '#3498db', strokeWidth: 2 }} />;
       case 'circle':
-        return {
-          ...baseStyle,
-          width: '90px',
-          height: '90px',
-          border: '2px solid #e74c3c',
-          borderRadius: '50%',
-          background: '#ecf0f1',
-        };
+        return <circle cx="45" cy="45" r="45" style={{ fill: '#ecf0f1', stroke: '#e74c3c', strokeWidth: 2 }} />;
       case 'diamond':
-        return {
-          ...baseStyle,
-          width: '100px',
-          height: '100px',
-          border: '2px solid #f1c40f',
-          transform: `translate(${x}px, ${y}px) rotate(45deg)`,
-          left: 0,
-          top: 0,
-          background: '#ecf0f1',
-        };
+        return <polygon points="50,0 100,50 50,100 0,50" style={{ fill: '#ecf0f1', stroke: '#f1c40f', strokeWidth: 2 }} />;
       default:
-        return {
-          ...baseStyle,
-          padding: '10px',
-          border: '1px solid black',
-        };
+        return <rect width="120" height="70" style={{ fill: '#ecf0f1', stroke: 'black', strokeWidth: 2 }} />;
     }
   };
 
@@ -88,26 +61,30 @@ const Shape: React.FC<ShapeProps> = ({ id, type, x, y, text, onMove, onTextChang
       onMouseEnter={() => setShowConnectionPoints(true)}
       onMouseLeave={() => setShowConnectionPoints(false)}
     >
-      <textarea
-        value={text}
-        onChange={handleTextChange}
-        style={{
-          width: '80%',
-          height: '80%',
-          border: 'none',
-          textAlign: 'center',
-          background: 'transparent',
-          resize: 'none',
-          outline: 'none',
-          transform: type === 'diamond' ? 'rotate(-45deg)' : 'none',
-        }}
-      />
+      <svg width="120" height="100">
+        {renderShape()}
+        <foreignObject x="10" y="10" width="100" height="80">
+          <textarea
+            value={text}
+            onChange={handleTextChange}
+            style={{
+              width: '100%',
+              height: '100%',
+              border: 'none',
+              textAlign: 'center',
+              background: 'transparent',
+              resize: 'none',
+              outline: 'none',
+            }}
+          />
+        </foreignObject>
+      </svg>
       {showConnectionPoints && (
         <>
-          <ConnectionPoint shapeId={id} position="top" onMouseDown={onStartConnection} onMouseUp={onEndConnection} />
-          <ConnectionPoint shapeId={id} position="bottom" onMouseDown={onStartConnection} onMouseUp={onEndConnection} />
-          <ConnectionPoint shapeId={id} position="left" onMouseDown={onStartConnection} onMouseUp={onEndConnection} />
-          <ConnectionPoint shapeId={id} position="right" onMouseDown={onStartConnection} onMouseUp={onEndConnection} />
+          <ConnectionPoint shapeId={id} position="top" onMouseDown={(e) => { if (e.button === 1) onStartConnection(id, 'top'); }} onMouseUp={(e) => { if (e.button === 1) onEndConnection(id); }} />
+          <ConnectionPoint shapeId={id} position="bottom" onMouseDown={(e) => { if (e.button === 1) onStartConnection(id, 'bottom'); }} onMouseUp={(e) => { if (e.button === 1) onEndConnection(id); }} />
+          <ConnectionPoint shapeId={id} position="left" onMouseDown={(e) => { if (e.button === 1) onStartConnection(id, 'left'); }} onMouseUp={(e) => { if (e.button === 1) onEndConnection(id); }} />
+          <ConnectionPoint shapeId={id} position="right" onMouseDown={(e) => { if (e.button === 1) onStartConnection(id, 'right'); }} onMouseUp={(e) => { if (e.button === 1) onEndConnection(id); }} />
         </>
       )}
     </div>
