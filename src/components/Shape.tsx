@@ -35,19 +35,6 @@ const Shape: React.FC<ShapeProps> = ({ id, type, x, y, text, onMove, onTextChang
     };
   };
 
-  const renderShape = () => {
-    switch (type) {
-      case 'rectangle':
-        return <rect width="120" height="70" style={{ fill: '#ecf0f1', stroke: '#3498db', strokeWidth: 2 }} />;
-      case 'circle':
-        return <circle cx="45" cy="45" r="45" style={{ fill: '#ecf0f1', stroke: '#e74c3c', strokeWidth: 2 }} />;
-      case 'diamond':
-        return <polygon points="50,0 100,50 50,100 0,50" style={{ fill: '#ecf0f1', stroke: '#f1c40f', strokeWidth: 2 }} />;
-      default:
-        return <rect width="120" height="70" style={{ fill: '#ecf0f1', stroke: 'black', strokeWidth: 2 }} />;
-    }
-  };
-
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onTextChange(id, e.target.value);
   };
@@ -60,9 +47,12 @@ const Shape: React.FC<ShapeProps> = ({ id, type, x, y, text, onMove, onTextChang
       style={style}
       onMouseEnter={() => setShowConnectionPoints(true)}
       onMouseLeave={() => setShowConnectionPoints(false)}
+      id={id}
     >
       <svg width="120" height="100">
-        {renderShape()}
+        {type === 'rectangle' && <rect width="120" height="70" style={{ fill: '#ecf0f1', stroke: '#3498db', strokeWidth: 2 }} />}
+        {type === 'circle' && <circle cx="60" cy="50" r="45" style={{ fill: '#ecf0f1', stroke: '#e74c3c', strokeWidth: 2 }} />}
+        {type === 'diamond' && <polygon points="60,0 120,50 60,100 0,50" style={{ fill: '#ecf0f1', stroke: '#f1c40f', strokeWidth: 2 }} />}
         <foreignObject x="10" y="10" width="100" height="80">
           <textarea
             value={text}
@@ -81,10 +71,10 @@ const Shape: React.FC<ShapeProps> = ({ id, type, x, y, text, onMove, onTextChang
       </svg>
       {showConnectionPoints && (
         <>
-          <ConnectionPoint shapeId={id} position="top" onMouseDown={(e) => { if (e.button === 1) onStartConnection(id, 'top'); }} onMouseUp={(e) => { if (e.button === 1) onEndConnection(id); }} />
-          <ConnectionPoint shapeId={id} position="bottom" onMouseDown={(e) => { if (e.button === 1) onStartConnection(id, 'bottom'); }} onMouseUp={(e) => { if (e.button === 1) onEndConnection(id); }} />
-          <ConnectionPoint shapeId={id} position="left" onMouseDown={(e) => { if (e.button === 1) onStartConnection(id, 'left'); }} onMouseUp={(e) => { if (e.button === 1) onEndConnection(id); }} />
-          <ConnectionPoint shapeId={id} position="right" onMouseDown={(e) => { if (e.button === 1) onStartConnection(id, 'right'); }} onMouseUp={(e) => { if (e.button === 1) onEndConnection(id); }} />
+          <ConnectionPoint shapeId={id} position="top" onMouseDown={(e) => { if (e.button === 0) onStartConnection(id, 'top'); }} onMouseUp={(e) => { if (e.button === 0) onEndConnection(id); }} />
+          <ConnectionPoint shapeId={id} position="bottom" onMouseDown={(e) => { if (e.button === 0) onStartConnection(id, 'bottom'); }} onMouseUp={(e) => { if (e.button === 0) onEndConnection(id); }} />
+          <ConnectionPoint shapeId={id} position="left" onMouseDown={(e) => { if (e.button === 0) onStartConnection(id, 'left'); }} onMouseUp={(e) => { if (e.button === 0) onEndConnection(id); }} />
+          <ConnectionPoint shapeId={id} position="right" onMouseDown={(e) => { if (e.button === 0) onStartConnection(id, 'right'); }} onMouseUp={(e) => { if (e.button === 0) onEndConnection(id); }} />
         </>
       )}
     </div>
