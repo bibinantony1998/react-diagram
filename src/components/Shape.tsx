@@ -19,7 +19,7 @@ const Shape: React.FC<ShapeProps> = ({ id, shape, x, y, text, onMove, onTextChan
 
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'shape',
-    item: { id, type, x, y },
+    item: { id, shape, x, y },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
