@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
+import ToolbarLineItem from './ToolbarLineItem';
 
 interface ToolbarItemProps {
   type: 'rectangle' | 'circle' | 'diamond';
@@ -60,6 +61,17 @@ const Toolbar: React.FC = () => {
           <polygon points="25,0 50,15 25,30 0,15" style={{ fill: '#ecf0f1', stroke: '#f1c40f', strokeWidth: 2 }} />
         </svg>
       </ToolbarItem>
+      <h3>Lines</h3>
+      <ToolbarLineItem type="solid">
+        <svg width="50" height="10">
+          <line x1="0" y1="5" x2="50" y2="5" stroke="black" strokeWidth="2" />
+        </svg>
+      </ToolbarLineItem>
+      <ToolbarLineItem type="dashed">
+        <svg width="50" height="10">
+          <line x1="0" y1="5" x2="50" y2="5" stroke="black" strokeWidth="2" strokeDasharray="5,5" />
+        </svg>
+      </ToolbarLineItem>
     </div>
   );
 };
