@@ -53,7 +53,7 @@ const DiagramArea: React.FC<DiagramAreaProps> = ({ popoverContent }) => {
     if (!shape) return;
 
     const { x, y } = getConnectorPosition(shape, position);
-    setDrawingLine({ id: 'drawing', start: { x, y }, end: { x, y } });
+    setDrawingLine({ id: shapeId, start: { x, y }, end: { x, y } });
   };
 
   const handleEndConnection = (shapeId: string, position: 'top' | 'bottom' | 'left' | 'right') => {
@@ -61,10 +61,16 @@ const DiagramArea: React.FC<DiagramAreaProps> = ({ popoverContent }) => {
       const shape = shapes.find(s => s.id === shapeId);
       if (!shape) return;
 
+      const startShape = shapes.find(s => s.id === drawingLine.id);
+      if (startShape && startShape.id === shape.id) {
+        setDrawingLine(null);
+        return;
+      }
+
       const { x, y } = getConnectorPosition(shape, position);
       setLines([...lines, { ...drawingLine, end: { x, y }, id: nanoid() }]);
+      setDrawingLine(null);
     }
-    setDrawingLine(null);
   };
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
